@@ -22,6 +22,7 @@
  */
 
 var NUMBER_OF_ADS = 8;
+
 var PIN_SIZE = {
   WIDTH: 56,
   HEIGHT: 75
@@ -50,6 +51,14 @@ var AD_TEMPLATE = {
   FEATURES: ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner'],
   TIME: ['12:00', '13:00', '14:00']
 };
+
+var KEYS = {
+  ESC: 27,
+  ENTER: 13
+};
+
+var ACTIVE_PIN = 'pin--active';
+var HIDDEN_ELEMENT = 'hidden';
 
 /**
  * @param {number} min
@@ -160,16 +169,31 @@ var createAd = function () {
 };
 
 /**
+ * Обрабатывает событие нажатия клавиши enter или клика на пин
+ * @param {Event} evt
+ */
+var pinEventHandler = function (evt) {
+  if (evt.keyCode === KEYS.ENTER || evt.type === 'click') {
+    activatePin(evt);
+  }
+};
+
+/**
  * Создаёт метку на карте
  * @param {Ad} ad
+ * @param {number} index индекс элемента массива
  * @return {HTMLDivElement}
  */
-var createPin = function (ad) {
+var createPin = function (ad, index) {
   var div = document.createElement('div');
   div.classList.add('pin');
+  div.setAttribute('tabindex', '0');
+  div.dataset.ad = index;
   div.style.left = ad.location.x - PIN_SIZE.WIDTH / 2 + 'px';
   div.style.top = ad.location.y - PIN_SIZE.HEIGHT + 'px';
   div.innerHTML = '<img src="' + ad.author.avatar + '" class="rounded" width="40" height="40">';
+  div.addEventListener('click', pinEventHandler);
+  div.addEventListener('keydown', pinEventHandler);
   return div;
 };
 
@@ -182,8 +206,8 @@ var createPin = function (ad) {
 var getFragment = function (array, fn) {
   var fragment = document.createDocumentFragment();
 
-  array.forEach(function (elem) {
-    fragment.appendChild(fn(elem));
+  array.forEach(function (elem, index) {
+    fragment.appendChild(fn(elem, index));
   });
 
   return fragment;
@@ -237,7 +261,52 @@ var pinMap = document.querySelector('.tokyo__pin-map');
 pinMap.appendChild(pinsList);
 var lodgeTemplate = document.querySelector('#lodge-template').content;
 var offerDialog = document.querySelector('#offer-dialog');
+var dialogClose = offerDialog.querySelector('.dialog__close');
 var dialogPanel = offerDialog.querySelector('.dialog__panel');
+var pins = pinMap.querySelectorAll('.pin:not(:first-child)');
 
-dialogPanel.innerHTML = '';
-dialogPanel.appendChild(renderAd(ads[0]));
+/**
+ * Активирует пин
+ * @param {Event} evt
+ */
+var activatePin = function (evt) {
+  removeClass(pins, ACTIVE_PIN);
+  var target = evt.currentTarget;
+  target.classList.add(ACTIVE_PIN);
+  openDialog(ads[target.dataset.ad]);
+};
+
+/**
+ * Открывает окно диалога с информацией о текущем выбранном объекте
+ * @param {Ad} ad
+ */
+var openDialog = function (ad) {
+  dialogPanel.innerHTML = '';
+  dialogPanel.appendChild(renderAd(ad));
+  offerDialog.classList.remove(HIDDEN_ELEMENT);
+};
+
+/**
+ * Удаляет класс
+ * @param {NodeList} elems - Элементы для поиска удаляемого класса
+ * @param {string} className - Удаляемый класс
+ */
+var removeClass = function (elems, className) {
+  elems.forEach(function (elem) {
+    elem.classList.remove(className);
+  });
+};
+
+/**
+ * Деактивирует активный пин и удаляет окно диалога
+ * @param {Event} evt
+ */
+var deactivateDialogAndPin = function (evt) {
+  if (evt.keyCode === KEYS.ESC || evt.type === 'click') {
+    offerDialog.classList.add(HIDDEN_ELEMENT);
+    removeClass(pins, ACTIVE_PIN);
+  }
+};
+
+dialogClose.addEventListener('click', deactivateDialogAndPin);
+document.body.addEventListener('keydown', deactivateDialogAndPin);
