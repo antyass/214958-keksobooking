@@ -9,55 +9,52 @@
   var priceField = form.querySelector('#price');
   var roomNumberField = form.querySelector('#room_number');
   var capacityField = form.querySelector('#capacity');
-  var options = capacityField.querySelectorAll('option');
   var formElems = form.querySelectorAll('input:not([type="submit"]), select');
 
-  var PRICE = {
-    'flat': 1000,
-    'bungalo': 0,
-    'house': 5000,
-    'palace': 10000
-  };
+  var REG_TIMES = ['12:00', '13:00', '14:00'];
+  var APARTMENT_TYPES = ['flat', 'bungalo', 'house', 'palace'];
+  var PRICE_PER_NIGHT = [1000, 0, 5000, 10000];
+  var ROOM_NUMBERS = ['1', '2', '3', '100'];
+  var CAPACITY_COUNT = [['1'], ['1', '2'], ['1', '2', '3'], ['0']];
 
-  var CAPACITY_NUMBER = {
-    '1': ['1'],
-    '2': ['1', '2'],
-    '3': ['1', '2', '3'],
-    '100': ['0']
+  /**
+   * Синхронизирует значение
+   * @param {HTMLInputElement} element
+   * @param {*} value
+   */
+  var syncValues = function (element, value) {
+    element.value = value;
   };
 
   /**
-   * Синхронизирует цену с типом жилья
+   * Синхронизирует минимальное значение
+   * @param {HTMLInputElement} element
+   * @param {*} value
    */
-  var syncFlatWithPrice = function () {
-    priceField.min = PRICE[flatTypeField.value];
+  var syncValuesWithMin = function (element, value) {
+    element.min = value;
   };
 
   /**
-   * Синхронизирует количество гостей с количеством комнат
+   * Синхронизирует значения
+   * @param {HTMLSelectElement} element
+   * @param {*} values
    */
-  var syncRoomsWithGuests = function () {
-    for (var i = 0; i < options.length; i++) {
-      options[i].disabled = !CAPACITY_NUMBER[roomNumberField.value].includes(options[i].value);
-      if (!options[i].disabled) {
-        capacityField.value = options[i].value;
+  var syncSelectOptions = function (element, values) {
+    for (var i = 0; i < element.options.length; i++) {
+      element.options[i].disabled = !values.includes(element.options[i].value);
+      if (!element.options[i].disabled) {
+        element.value = element.options[i].value;
       }
     }
   };
 
-  /**
-   * Синхронизирует время выезда со временем заезда
-   */
-  var syncTimeIn = function () {
-    timeOutField.selectedIndex = timeInField.selectedIndex;
-  };
+  window.synchronizeFields(timeInField, timeOutField, REG_TIMES, REG_TIMES, syncValues);
+  window.synchronizeFields(timeOutField, timeInField, REG_TIMES, REG_TIMES, syncValues);
 
-  /**
-   * Синхронизирует время заезда со временем выезда
-   */
-  var syncTimeOut = function () {
-    timeInField.selectedIndex = timeOutField.selectedIndex;
-  };
+  window.synchronizeFields(flatTypeField, priceField, APARTMENT_TYPES, PRICE_PER_NIGHT, syncValuesWithMin);
+
+  window.synchronizeFields(roomNumberField, capacityField, ROOM_NUMBERS, CAPACITY_COUNT, syncSelectOptions);
 
   titleField.addEventListener('input', function () {
     titleField.setCustomValidity(
@@ -66,13 +63,6 @@
           ''
     );
   });
-
-  timeInField.addEventListener('change', syncTimeIn);
-  timeOutField.addEventListener('change', syncTimeOut);
-
-  roomNumberField.addEventListener('change', syncRoomsWithGuests);
-
-  flatTypeField.addEventListener('change', syncFlatWithPrice);
 
   form.addEventListener('invalid', function () {
     formElems.forEach(function (elem) {
