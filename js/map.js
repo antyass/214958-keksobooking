@@ -2,7 +2,11 @@
 
 window.map = (function () {
 
-  var NUMBER_OF_ADS = 8;
+  /**
+   * Объявление
+   * @typedef {object} Ad
+   */
+
   var MAIN_PIN_SIZE = {
     WIDTH: 75,
     HEIGHT: 94
@@ -17,10 +21,9 @@ window.map = (function () {
       MAX: 500
     }
   };
-  var ads = window.data.getAds(NUMBER_OF_ADS);
-  var pins = window.pin.createPins(ads);
+
+  var ads;
   var pinMap = document.querySelector('.tokyo__pin-map');
-  pinMap.appendChild(pins);
   var pinMain = pinMap.querySelector('.pin__main');
   var form = document.querySelector('.notice__form');
   var addressField = form.querySelector('#address');
@@ -81,6 +84,18 @@ window.map = (function () {
   var checkLimit = function (number, limitMin, limitMax) {
     return Math.min(Math.max(number, limitMin), limitMax);
   };
+
+  /**
+   * Возвращает массив объявлений
+   * @param {Array.<Ad>} response
+   */
+  var getAds = function (response) {
+    ads = response;
+    var pins = window.pin.createPins(response);
+    pinMap.appendChild(pins);
+  };
+
+  window.backend.load(getAds, window.util.errorHandler);
 
   pinMain.addEventListener('mousedown', function (evt) {
     evt.preventDefault();

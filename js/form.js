@@ -10,6 +10,7 @@
   var roomNumberField = form.querySelector('#room_number');
   var capacityField = form.querySelector('#capacity');
   var formElems = form.querySelectorAll('input:not([type="submit"]), select');
+  var formSubmit = form.querySelector('.form__submit');
 
   var REG_TIMES = ['12:00', '13:00', '14:00'];
   var APARTMENT_TYPES = ['flat', 'bungalo', 'house', 'palace'];
@@ -69,4 +70,20 @@
       elem.classList.toggle('invalid', !elem.validity.valid);
     });
   }, true);
+
+  form.addEventListener('submit', function (evt) {
+    formElems.forEach(function (elem) {
+      elem.classList.remove('invalid');
+    });
+    evt.preventDefault();
+    formSubmit.disabled = true;
+    window.backend.save(new FormData(form), function () {
+      formSubmit.disabled = false;
+      form.reset();
+    }, function (errorMessage) {
+      formSubmit.disabled = false;
+      window.util.errorHandler(errorMessage);
+    });
+  });
+
 })();
