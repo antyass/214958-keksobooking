@@ -77,7 +77,8 @@ window.card = (function () {
   };
 
   return {
-    open: openDialog
+    open: openDialog,
+    close: deactivateDialog
   };
 
 })();
