@@ -58,7 +58,7 @@ window.util = (function () {
     document.body.appendChild(node);
   };
 
-    /**
+  /**
    * «Устраняет дребезг» при частом вызове той функции, которую ей передают
    * @param {Function} func
    * @return {number}
@@ -74,12 +74,26 @@ window.util = (function () {
     };
   };
 
+  /**
+   * Обрабатывает загрузку файла
+   * @param {File} file
+   * @param {Function} callback
+   */
+  var loadFileAsDataUrl = function (file, callback) {
+    var reader = new FileReader();
+    reader.addEventListener('load', function () {
+      callback(reader);
+    });
+    reader.readAsDataURL(file);
+  };
+
   return {
     isEnterEvent: isEnterEvent,
     isEscEvent: isEscEvent,
     getFragment: getFragment,
     errorHandler: errorHandler,
-    debounce: debounce
+    debounce: debounce,
+    loadFileAsDataUrl: loadFileAsDataUrl
   };
 
 })();

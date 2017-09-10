@@ -192,7 +192,8 @@ select option:hover {
     height:100%;
 }
 
-.upload:hover {
+.upload:hover,
+.upload-highlighted {
     border-color: #ff6547;
     color: #ff6547;
 }
@@ -416,6 +417,7 @@ select option:hover {
     border: 4px transparent;
 
     background: #dadad4;
+    overflow: hidden;
 }
 
 .form__submit {
@@ -683,4 +685,16 @@ select.invalid {
   z-index: 1000;
   color: #FFFFFF;
   padding: 5px 0;
+}
+
+.ad-photos {
+  width: 65px;
+  height: 50px;
+  object-fit: cover;
+}
+
+.user-photo {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
 }

@@ -15,11 +15,19 @@ window.card = (function () {
    */
   var renderAd = function (ad) {
     var adElement = lodgeTemplate.cloneNode(true);
+    var photosContainer = adElement.querySelector('.lodge__photos');
     var lodgeType = {
       flat: 'Квартира',
       bungalo: 'Бунгало',
       house: 'Дом'
     };
+
+    photosContainer.appendChild(window.util.getFragment(ad.offer.photos, function (photo) {
+      var img = document.createElement('img');
+      img.classList.add('ad-photos');
+      img.src = photo;
+      return img;
+    }));
 
     adElement.querySelector('.lodge__title').textContent = ad.offer.title;
     adElement.querySelector('.lodge__price').innerHTML = ad.offer.price + ' &#x20bd;/ночь';
