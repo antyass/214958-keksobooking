@@ -11,22 +11,22 @@ window.util = (function () {
   /**
    * Обрабатывает событие нажатия клавиши enter
    * @param {Event} evt
-   * @param {Function} action
+   * @param {Function} callback
    */
-  var isEnterEvent = function (evt, action) {
+  var isEnterEvent = function (evt, callback) {
     if (evt.keyCode === KEYS.ENTER) {
-      action(evt);
+      callback(evt);
     }
   };
 
   /**
    * Обрабатывает событие нажатия клавиши escape
    * @param {Event} evt
-   * @param {Function} action
+   * @param {Function} callback
    */
-  var isEscEvent = function (evt, action) {
+  var isEscEvent = function (evt, callback) {
     if (evt.keyCode === KEYS.ESC) {
-      action(evt);
+      callback(evt);
     }
   };
 

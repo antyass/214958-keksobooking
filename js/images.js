@@ -4,6 +4,7 @@
 
   var FILE_TYPES = ['gif', 'png', 'jpg', 'jpeg'];
   var UPLOAD_HOVER = 'upload-highlighted';
+
   var draggedItem;
   var cellForImage;
   var photoContainer = document.querySelector('.form__photo-container');
@@ -62,7 +63,7 @@
 
   avatarChooser.addEventListener('change', function () {
     var file = avatarChooser.files[0];
-    if (isFileMatch(file)) {
+    if (file && isFileMatch(file)) {
       window.util.loadFileAsDataUrl(file, function (reader) {
         imgPin.src = preview.src = reader.result;
       });

@@ -6,29 +6,29 @@ window.backend = (function () {
 
   /**
    * Возвращает объект XMLHttpRequest
-   * @param {Function} onLoad
-   * @param {Function} onError
+   * @param {Function} loadEventHandler
+   * @param {Function} errorEventHandler
    * @return {XMLHttpRequest}
    */
-  var setup = function (onLoad, onError) {
+  var setup = function (loadEventHandler, errorEventHandler) {
     var xhr = new XMLHttpRequest();
     xhr.responseType = 'json';
     xhr.timeout = 10000;
 
     xhr.addEventListener('load', function () {
       if (xhr.status === 200) {
-        onLoad(xhr.response);
+        loadEventHandler(xhr.response);
       } else {
-        onError('Неизвестный статус: ' + xhr.status + '' + xhr.statusText);
+        errorEventHandler('Неизвестный статус: ' + xhr.status + '' + xhr.statusText);
       }
     });
 
     xhr.addEventListener('error', function () {
-      onError('Произошла ошибка соединения');
+      errorEventHandler('Произошла ошибка соединения');
     });
 
     xhr.addEventListener('timeout', function () {
-      onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
+      errorEventHandler('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
     });
 
     return xhr;
@@ -36,11 +36,11 @@ window.backend = (function () {
 
   /**
    * Загружает данные
-   * @param {Function} onLoad
-   * @param {Function} onError
+   * @param {Function} loadEventHandler
+   * @param {Function} errorEventHandler
    */
-  var load = function (onLoad, onError) {
-    var xhr = setup(onLoad, onError);
+  var load = function (loadEventHandler, errorEventHandler) {
+    var xhr = setup(loadEventHandler, errorEventHandler);
 
     xhr.open('GET', GET_DATA_URL);
     xhr.send();
@@ -49,11 +49,11 @@ window.backend = (function () {
   /**
    * Отправляет данные
    * @param {FormData} data
-   * @param {Function} onLoad
-   * @param {Function} onError
+   * @param {Function} loadEventHandler
+   * @param {Function} errorEventHandler
    */
-  var save = function (data, onLoad, onError) {
-    var xhr = setup(onLoad, onError);
+  var save = function (data, loadEventHandler, errorEventHandler) {
+    var xhr = setup(loadEventHandler, errorEventHandler);
 
     xhr.open('POST', SEND_DATA_URL);
     xhr.send(data);

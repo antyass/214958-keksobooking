@@ -123,16 +123,15 @@
         <div class="form__panel">
           <div class="form__element  form__element--wide">
             <label for="title">Заголовок объявления</label>
-            <input id="title" name="title" type="text" placeholder="Милая, уютная квартирка, например" maxlength="100"   pattern=".{30,}" required>
+            <input id="title" name="title" type="text" placeholder="Милая, уютная квартирка, например" pattern=".{30,100}" required>
           </div>
           <div class="form__row">
             <div class="form__element">
               <label for="type">Тип жилья</label>
               <select id="type" name="type">
-                <option value="flat" selected>Квартира</option>
-                <option value="bungalo">Лачуга</option>
+                <option value="flat">Квартира</option>
+                <option value="bungalo" selected>Лачуга</option>
                 <option value="house">Дом</option>
-                <option value="palace">Дворец</option>
               </select>
             </div>
             <div class="form__element">

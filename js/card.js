@@ -2,11 +2,12 @@
 
 window.card = (function () {
 
+  var HIDDEN_ELEMENT = 'hidden';
+
   var offerDialog = document.querySelector('#offer-dialog');
   var dialogClose = offerDialog.querySelector('.dialog__close');
   var dialogPanel = offerDialog.querySelector('.dialog__panel');
   var lodgeTemplate = document.querySelector('#lodge-template').content;
-  var HIDDEN_ELEMENT = 'hidden';
 
   /**
    * Создаёт DOM-элемент на основе JS-объекта
@@ -61,18 +62,10 @@ window.card = (function () {
    */
   var deactivateDialog = function () {
     offerDialog.classList.add(HIDDEN_ELEMENT);
-    window.card.onDeactivate();
+    window.card.deactivateHandler();
+
+    document.body.removeEventListener('keydown', dialogEventHandler);
   };
-
-  dialogClose.addEventListener('click', function () {
-    deactivateDialog();
-  });
-
-  document.body.addEventListener('keydown', function (evt) {
-    window.util.isEscEvent(evt, function () {
-      deactivateDialog();
-    });
-  });
 
   /**
    * Открывает окно диалога с информацией о текущем выбранном объекте
@@ -82,7 +75,23 @@ window.card = (function () {
     dialogPanel.innerHTML = '';
     dialogPanel.appendChild(renderAd(ad));
     offerDialog.classList.remove(HIDDEN_ELEMENT);
+
+    document.body.addEventListener('keydown', dialogEventHandler);
   };
+
+  /**
+   * Обрабатывает событие нажатия клавиши для закрытия диалога
+   * @param {Event} evt
+   */
+  var dialogEventHandler = function (evt) {
+    window.util.isEscEvent(evt, function () {
+      deactivateDialog();
+    });
+  };
+
+  dialogClose.addEventListener('click', function () {
+    deactivateDialog();
+  });
 
   return {
     open: openDialog,

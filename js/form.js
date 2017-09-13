@@ -1,6 +1,12 @@
 'use strict';
 
 (function () {
+  var REG_TIMES = ['12:00', '13:00', '14:00'];
+  var APARTMENT_TYPES = ['flat', 'bungalo', 'house'];
+  var PRICES = [1000, 0, 10000];
+  var ROOM_NUMBERS = ['1', '2', '3', '100'];
+  var CAPACITY_COUNTS = [['1'], ['1', '2'], ['1', '2', '3'], ['0']];
+
   var form = document.querySelector('.notice__form');
   var titleField = form.querySelector('#title');
   var timeInField = form.querySelector('#timein');
@@ -11,12 +17,6 @@
   var capacityField = form.querySelector('#capacity');
   var formElems = form.querySelectorAll('input:not([type="submit"]), select');
   var formSubmit = form.querySelector('.form__submit');
-
-  var REG_TIMES = ['12:00', '13:00', '14:00'];
-  var APARTMENT_TYPES = ['flat', 'bungalo', 'house', 'palace'];
-  var PRICE_PER_NIGHT = [1000, 0, 5000, 10000];
-  var ROOM_NUMBERS = ['1', '2', '3', '100'];
-  var CAPACITY_COUNT = [['1'], ['1', '2'], ['1', '2', '3'], ['0']];
 
   /**
    * Синхронизирует значение
@@ -42,37 +42,37 @@
    * @param {*} values
    */
   var syncSelectOptions = function (element, values) {
-    for (var i = 0; i < element.options.length; i++) {
-      element.options[i].disabled = !values.includes(element.options[i].value);
-      if (!element.options[i].disabled) {
-        element.value = element.options[i].value;
+    Array.from(element.options).forEach(function (option) {
+      option.disabled = !values.includes(option.value);
+      if (!option.disabled) {
+        element.value = option.value;
       }
-    }
+    });
   };
 
-  window.synchronizeFields(timeInField, timeOutField, REG_TIMES, REG_TIMES, syncValues);
-  window.synchronizeFields(timeOutField, timeInField, REG_TIMES, REG_TIMES, syncValues);
+  window.sync.synchronizeFields(timeInField, timeOutField, REG_TIMES, REG_TIMES, syncValues);
+  window.sync.synchronizeFields(timeOutField, timeInField, REG_TIMES, REG_TIMES, syncValues);
 
-  window.synchronizeFields(flatTypeField, priceField, APARTMENT_TYPES, PRICE_PER_NIGHT, syncValuesWithMin);
+  window.sync.synchronizeFields(flatTypeField, priceField, APARTMENT_TYPES, PRICES, syncValuesWithMin);
 
-  window.synchronizeFields(roomNumberField, capacityField, ROOM_NUMBERS, CAPACITY_COUNT, syncSelectOptions);
+  window.sync.synchronizeFields(roomNumberField, capacityField, ROOM_NUMBERS, CAPACITY_COUNTS, syncSelectOptions);
 
   titleField.addEventListener('input', function () {
     titleField.setCustomValidity(
         titleField.validity.patternMismatch ?
-          'Пожалуйста, используйте не менее 30 символов' :
+          'Пожалуйста, используйте не менее 30 и не более 100 символов' :
           ''
     );
   });
 
   form.addEventListener('invalid', function () {
-    formElems.forEach(function (elem) {
+    Array.from(formElems).forEach(function (elem) {
       elem.classList.toggle('invalid', !elem.validity.valid);
     });
   }, true);
 
   form.addEventListener('submit', function (evt) {
-    formElems.forEach(function (elem) {
+    Array.from(formElems).forEach(function (elem) {
       elem.classList.remove('invalid');
     });
     evt.preventDefault();
