@@ -69,10 +69,13 @@ window.map = (function () {
   var syncPinWithField = function () {
     var coords = addressField.value.match(/\d+/g);
 
-    var coordX = checkLimit(parseInt(coords[0], 10), LOCATION.X.MIN, LOCATION.X.MAX);
-    var coordY = checkLimit(parseInt(coords[1], 10), LOCATION.Y.MIN, LOCATION.Y.MAX);
+    if (coords) {
+      var coordX = checkLimit(parseInt(coords[0], 10), LOCATION.X.MIN, LOCATION.X.MAX);
+      var coordY = checkLimit(parseInt(coords[1], 10), LOCATION.Y.MIN, LOCATION.Y.MAX);
 
-    setPinCoords(coordX, coordY);
+      setPinCoords(coordX, coordY);
+    }
+
   };
 
   /**
