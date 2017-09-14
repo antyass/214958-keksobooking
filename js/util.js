@@ -11,22 +11,22 @@ window.util = (function () {
   /**
    * Обрабатывает событие нажатия клавиши enter
    * @param {Event} evt
-   * @param {Function} action
+   * @param {Function} callback
    */
-  var isEnterEvent = function (evt, action) {
+  var isEnterEvent = function (evt, callback) {
     if (evt.keyCode === KEYS.ENTER) {
-      action(evt);
+      callback(evt);
     }
   };
 
   /**
    * Обрабатывает событие нажатия клавиши escape
    * @param {Event} evt
-   * @param {Function} action
+   * @param {Function} callback
    */
-  var isEscEvent = function (evt, action) {
+  var isEscEvent = function (evt, callback) {
     if (evt.keyCode === KEYS.ESC) {
-      action(evt);
+      callback(evt);
     }
   };
 
@@ -58,7 +58,7 @@ window.util = (function () {
     document.body.appendChild(node);
   };
 
-    /**
+  /**
    * «Устраняет дребезг» при частом вызове той функции, которую ей передают
    * @param {Function} func
    * @return {number}
@@ -74,12 +74,26 @@ window.util = (function () {
     };
   };
 
+  /**
+   * Обрабатывает загрузку файла
+   * @param {File} file
+   * @param {Function} callback
+   */
+  var loadFileAsDataUrl = function (file, callback) {
+    var reader = new FileReader();
+    reader.addEventListener('load', function () {
+      callback(reader);
+    });
+    reader.readAsDataURL(file);
+  };
+
   return {
     isEnterEvent: isEnterEvent,
     isEscEvent: isEscEvent,
     getFragment: getFragment,
     errorHandler: errorHandler,
-    debounce: debounce
+    debounce: debounce,
+    loadFileAsDataUrl: loadFileAsDataUrl
   };
 
 })();

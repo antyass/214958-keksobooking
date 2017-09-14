@@ -24,7 +24,8 @@ window.map = (function () {
 
   var ads;
   var filtered;
-  var pinMap = document.querySelector('.tokyo__pin-map');
+  var map = document.querySelector('.tokyo');
+  var pinMap = map.querySelector('.tokyo__pin-map');
   var pinMain = pinMap.querySelector('.pin__main');
   var form = document.querySelector('.notice__form');
   var addressField = form.querySelector('#address');
@@ -39,14 +40,14 @@ window.map = (function () {
    * Запускает функцию открытия диалога при активации пина
    * @param {number} adIndex
    */
-  window.pin.onActivate = function (adIndex) {
+  window.pin.activateHandler = function (adIndex) {
     window.card.open(filtered[adIndex]);
   };
 
   /**
    * Запускает функцию деактивации пина при закрытии диалога
    */
-  window.card.onDeactivate = function () {
+  window.card.deactivateHandler = function () {
     window.pin.deactivate();
   };
 
@@ -56,8 +57,11 @@ window.map = (function () {
    * @param {number} y
    */
   var syncFieldWithPin = function (x, y) {
-    addressField.value = 'x: ' + parseInt(x, 10) + ', y: ' + parseInt(y, 10);
+    x = x || pinMain.getBoundingClientRect().left - map.getBoundingClientRect().left + pageXOffset + MAIN_PIN_SIZE.WIDTH / 2;
+    y = y || pinMain.getBoundingClientRect().top + pageYOffset + MAIN_PIN_SIZE.HEIGHT;
+    addressField.value = 'x: ' + Math.round(x) + ', y: ' + Math.round(y);
   };
+  syncFieldWithPin();
 
   /**
    * Синхронизирует координаты пина с полем
@@ -99,7 +103,7 @@ window.map = (function () {
   var getAds = function (response) {
     ads = response;
     filtered = response;
-    updatePins(ads);
+    updatePins(ads.slice(0, 3));
   };
 
   window.backend.load(getAds, window.util.errorHandler);
@@ -112,7 +116,7 @@ window.map = (function () {
     window.card.close();
     var pins = window.pin.createPins(adverts);
     var oldPins = pinMap.querySelectorAll('.pin:not(.pin__main)');
-    oldPins.forEach(function (pin) {
+    Array.from(oldPins).forEach(function (pin) {
       pin.parentElement.removeChild(pin);
     });
     pinMap.appendChild(pins);

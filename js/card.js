@@ -2,11 +2,12 @@
 
 window.card = (function () {
 
+  var HIDDEN_ELEMENT = 'hidden';
+
   var offerDialog = document.querySelector('#offer-dialog');
   var dialogClose = offerDialog.querySelector('.dialog__close');
   var dialogPanel = offerDialog.querySelector('.dialog__panel');
   var lodgeTemplate = document.querySelector('#lodge-template').content;
-  var HIDDEN_ELEMENT = 'hidden';
 
   /**
    * Создаёт DOM-элемент на основе JS-объекта
@@ -15,11 +16,19 @@ window.card = (function () {
    */
   var renderAd = function (ad) {
     var adElement = lodgeTemplate.cloneNode(true);
+    var photosContainer = adElement.querySelector('.lodge__photos');
     var lodgeType = {
       flat: 'Квартира',
       bungalo: 'Бунгало',
       house: 'Дом'
     };
+
+    photosContainer.appendChild(window.util.getFragment(ad.offer.photos, function (photo) {
+      var img = document.createElement('img');
+      img.classList.add('ad-photos');
+      img.src = photo;
+      return img;
+    }));
 
     adElement.querySelector('.lodge__title').textContent = ad.offer.title;
     adElement.querySelector('.lodge__price').innerHTML = ad.offer.price + ' &#x20bd;/ночь';
@@ -53,18 +62,10 @@ window.card = (function () {
    */
   var deactivateDialog = function () {
     offerDialog.classList.add(HIDDEN_ELEMENT);
-    window.card.onDeactivate();
+    window.card.deactivateHandler();
+
+    document.body.removeEventListener('keydown', dialogEventHandler);
   };
-
-  dialogClose.addEventListener('click', function () {
-    deactivateDialog();
-  });
-
-  document.body.addEventListener('keydown', function (evt) {
-    window.util.isEscEvent(evt, function () {
-      deactivateDialog();
-    });
-  });
 
   /**
    * Открывает окно диалога с информацией о текущем выбранном объекте
@@ -74,7 +75,23 @@ window.card = (function () {
     dialogPanel.innerHTML = '';
     dialogPanel.appendChild(renderAd(ad));
     offerDialog.classList.remove(HIDDEN_ELEMENT);
+
+    document.body.addEventListener('keydown', dialogEventHandler);
   };
+
+  /**
+   * Обрабатывает событие нажатия клавиши для закрытия диалога
+   * @param {Event} evt
+   */
+  var dialogEventHandler = function (evt) {
+    window.util.isEscEvent(evt, function () {
+      deactivateDialog();
+    });
+  };
+
+  dialogClose.addEventListener('click', function () {
+    deactivateDialog();
+  });
 
   return {
     open: openDialog,

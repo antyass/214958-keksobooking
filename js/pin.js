@@ -16,7 +16,7 @@ window.pin = (function () {
     deactivatePin();
     var target = evt.currentTarget;
     target.classList.add(ACTIVE_PIN);
-    window.pin.onActivate(target.dataset.ad);
+    window.pin.activateHandler(target.dataset.ad);
   };
 
   /**

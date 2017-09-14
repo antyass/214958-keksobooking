@@ -1,6 +1,6 @@
 'use strict';
 
-(function () {
+window.sync = (function () {
 
   /**
    * Синхронизирует значения полей
@@ -8,13 +8,22 @@
    * @param {HTMLSelectElement} secondField
    * @param {array} firstValues
    * @param {array} secondValues
-   * @param {Function} action
+   * @param {Function} callback
    */
-  window.synchronizeFields = function (firstField, secondField, firstValues, secondValues, action) {
+  var synchronizeFields = function (firstField, secondField, firstValues, secondValues, callback) {
+    synchronizeHandler(firstField, secondField, firstValues, secondValues, callback);
     firstField.addEventListener('change', function () {
-      var index = firstValues.indexOf(firstField.value);
-      action(secondField, secondValues[index]);
+      synchronizeHandler(firstField, secondField, firstValues, secondValues, callback);
     });
+  };
+
+  var synchronizeHandler = function (firstField, secondField, firstValues, secondValues, callback) {
+    var index = firstValues.indexOf(firstField.value);
+    callback(secondField, secondValues[index]);
+  };
+
+  return {
+    synchronizeFields: synchronizeFields
   };
 
 })();
